@@ -12,29 +12,36 @@ class InputController:
         self.confidentInterval = 0
         self.modellingMethod = ''
 
+    @staticmethod
+    def checkPoint(point):
+        if point == ['']:
+            a = '0'
+            b = '0'
+        else:
+            if len(point) == 2:
+                a = point[0]
+                b = point[1]
+            else:
+                a = point[0]
+                b = point[0]
+
+
+        return a, b
+
     def setOriginalData(self):
         self.originalData = input("Data to Analyze is: ")
 
     def setLinearFeaturePoint(self):
-        try:
-            self.linearFeatureBeginPoint, self.linearFeatureEndPoint = input("Column to use as Linear Feature (a->b, "
-                                                                             "leave if none): ").split('->')
-        except ValueError:
-            pass
+        point = input("Column to use as Linear Feature (a->b, leave if none): ").split('->')
+        self.linearFeatureBeginPoint, self.linearFeatureEndPoint = InputController.checkPoint(point)
 
     def setFactorFeaturePoint(self):
-        try:
-            self.factorFeatureBeginPoint, self.factorFeatureEndPoint = input("Column to use as Factor Feature (a->b, "
-                                                                             "leave if none): ").split('->')
-        except ValueError:
-            pass
+        point = input("Column to use as Factor Feature (a->b, leave if none): ").split('->')
+        self.factorFeatureBeginPoint, self.factorFeatureEndPoint = InputController.checkPoint(point)
 
     def setLevelFeaturePoint(self):
-        try:
-            self.levelFeatureBeginPoint, self.levelFeatureEndPoint = input("Column to use as Level Feature (a->b, "
-                                                                           "leave if none): ").split('->')
-        except ValueError:
-            pass
+        point = input("Column to use as Level Feature (a->b, leave if none): ").split('->')
+        self.levelFeatureBeginPoint, self.levelFeatureEndPoint = InputController.checkPoint(point)
 
     def setModelTarget(self):
         self.modelTarget = input("Column is used as Model Target: ")

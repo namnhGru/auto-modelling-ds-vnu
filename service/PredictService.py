@@ -23,13 +23,9 @@ class PredictService:
 
     def setInputData(self):
         self.inputData = pd.read_csv(self.inputController.originalData)
-        print(self.inputData)
 
     def setTestData(self):
-        self.testData = self.inputData.iloc[
-                            int(round(len(self.inputData) * 0.1)):,
-                            :
-                            ]
+        self.testData = self.inputData.head(int(round(len(self.inputData) * 0.2)))
 
     def setTrainResult(self):
         self.trainResult = self.modelProperties.resModel.predict()
@@ -48,8 +44,6 @@ class PredictService:
             y_true=self.testData[self.modelProperties.afterCorData.modelTargetData.name],
             y_pred=self.testResult
         )
-        print(self.testData[self.modelProperties.afterCorData.modelTargetData.name])
-        print(self.testResult)
 
 
 

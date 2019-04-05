@@ -1,11 +1,13 @@
 from model.ModelProperties import ModelProperties
 from model.AfterCorData import AfterCorData
+from service.DistributionService import DistributionService
 import pandas as pd
 
 
 class AICService:
     def __init__(self):
         self.afterCorData = AfterCorData()
+        self.distributionService = DistributionService()
         self.currentModelProperties = ModelProperties()
         self.nextModelProperties = ModelProperties()
         self.sortedPValues = pd.Series()
@@ -16,6 +18,9 @@ class AICService:
 
     def setAfterCorData(self, afterCorData):
         self.afterCorData = afterCorData
+
+    def setDistributionService(self, distributionService):
+        self.distributionService = distributionService
 
     def setCurrentModelProperties(self, currentModelProperties):
         self.currentModelProperties = currentModelProperties
@@ -36,7 +41,8 @@ class AICService:
         self.nextModelProperties.stringModel = self.nextModelProperties.stringModel.replace('+', '')
         self.nextModelProperties.stringModel = self.nextModelProperties.stringModel.replace(' ', '')
         self.nextModelProperties.stringModel = self.nextModelProperties.stringModel.replace(']n', '] + n')
-        self.nextModelProperties.modelType = 'lm'
+        self.nextModelProperties.modelType = self.currentModelProperties.modelType
+        self.nextModelProperties.familyDistribution = self.currentModelProperties.familyDistribution
         self.nextModelProperties.setAfterCorData(self.afterCorData)
         self.nextModelProperties.setResModel()
 

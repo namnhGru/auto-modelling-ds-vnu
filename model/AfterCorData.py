@@ -18,19 +18,23 @@ class AfterCorData:
         self.genData = genData
 
     def setLinearFeatureData(self):
+        if self.genData.linearFeatureData.empty is True:
+            pass
         self.linearFeatureData = CorrelationService.corLinearWithModelTarget(
             self.genData.linearFeatureData,
             self.genData.modelTargetData
         )
 
     def setFactorFeatureData(self):
-        self.factorFeatureData = CorrelationService.corFactorWithModelTarget(
-            self.genData.factorFeatureData,
-            self.genData.modelTargetData
-        )
+        if self.genData.factorFeatureData.empty is True:
+            pass
+        else:
+            self.factorFeatureData = CorrelationService.corFactorWithModelTarget(
+                self.genData.factorFeatureData,
+                self.genData.modelTargetData
+            )
 
     def setLevelFeatureData(self):
-
         self.levelFeatureData = self.genData.levelFeatureData.copy()
 
     def setModelTargetData(self):

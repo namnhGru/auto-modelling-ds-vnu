@@ -7,9 +7,9 @@ class GenData:
     def __init__(self):
         self.inputService = InputController()
         self.originalData = pd.DataFrame()
-        self.linearFeatureData = pd.DataFrame()
-        self.factorFeatureData = pd.DataFrame()
-        self.levelFeatureData = pd.DataFrame()
+        self.linearFeatureData = pd.DataFrame(columns=['A'])
+        self.factorFeatureData = pd.DataFrame(columns=['A'])
+        self.levelFeatureData = pd.DataFrame(columns=['A'])
         self.modelTargetData = pd.Series()
         self.newData = pd.DataFrame()
 
@@ -18,16 +18,17 @@ class GenData:
 
     def setOriginalData(self):
         self.inputService.setOriginalData()
-        self.originalData = pd.read_csv(self.inputService.originalData).head(
+        self.originalData = pd.read_csv(self.inputService.originalData)
+        self.originalData = self.originalData.tail(
             int(round(
-                len(self.inputService.originalData) * 0.9
+                self.originalData.shape[0] * 0.7
             ))
-        )
+        ).dropna().reset_index(drop=True)
 
     def setLinearFeatureData(self):
         self.inputService.setLinearFeaturePoint()
         if self.inputService.linearFeatureBeginPoint == '0':
-            self.linearFeatureData = pd.DataFrame()
+            self.linearFeatureData = pd.DataFrame(columns=['xAx'])
         else:
             self.linearFeatureData = self.originalData.loc[
                                  :,
@@ -40,7 +41,7 @@ class GenData:
     def setFactorFeatureData(self):
         self.inputService.setFactorFeaturePoint()
         if self.inputService.factorFeatureBeginPoint == '0':
-            self.factorFeatureData = pd.DataFrame()
+            self.factorFeatureData = pd.DataFrame(columns=['xAx'])
         else:
             self.factorFeatureData = self.originalData.loc[
                                  :,
@@ -53,7 +54,7 @@ class GenData:
     def setLevelFeatureData(self):
         self.inputService.setLevelFeaturePoint()
         if self.inputService.levelFeatureBeginPoint == '0':
-            self.levelFeatureData = pd.DataFrame()
+            self.levelFeatureData = pd.DataFrame(columns=['xAx'])
         else:
             self.levelFeatureData = self.originalData.loc[
                                 :,
@@ -83,9 +84,12 @@ class GenData:
             self.levelFeatureData[_] = self.levelFeatureData[_].astype(cat_dtype)
 
     def setNewData(self):
-        self.newData = self.newData.append(self.linearFeatureData)
-        self.newData = self.newData.append(self.factorFeatureData)
-        self.newData = self.newData.append(self.levelFeatureData)
+        self.newData = pd.concat([
+            self.linearFeatureData,
+            self.factorFeatureData,
+            self.levelFeatureData],
+            axis=1
+        ).dropna(axis=1)
 
     def __str__(self):
         return str(self.originalData) \

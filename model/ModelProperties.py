@@ -74,13 +74,13 @@ class ModelProperties:
             self.familyDistribution = sm.families.Poisson(
                 link=L.log
             )
-        if comparator == 'Exponential':
-            self.familyDistribution = sm.families.Gamma(
-                link=L.log
+        if comparator == 'Exp':
+            self.familyDistribution = sm.families.Gaussian(
+                link=L.inverse_power
             )
         if comparator == 'Gamma':
             self.familyDistribution = sm.families.Gamma(
-                link=L.log
+                link=L.inverse_power
             )
         if comparator == 'Binomial':
             self.familyDistribution = sm.families.Binomial(
@@ -102,7 +102,7 @@ class ModelProperties:
 
         if self.modelType == 'glm'.casefold():
             self.resModel = smf.glm(
-                formula=self.stringModel,
+                self.stringModel,
                 data=pd.concat([
                     self.afterCorData.newData,
                     self.afterCorData.modelTargetData

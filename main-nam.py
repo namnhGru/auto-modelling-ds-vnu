@@ -1,11 +1,12 @@
 from model.Banner import Banner
-from service.InputController import InputController
 from model.GenData import GenData
 from model.AfterCorData import AfterCorData
 from model.ModelProperties import ModelProperties
+from service.InputController import InputController
 from service.DistributionService import DistributionService
 from service.AICService import AICService
 from service.PredictService import PredictService
+import matplotlib.pyplot as plt
 
 #################################
 #                               #
@@ -33,11 +34,11 @@ inputController = InputController()
 genData = GenData()
 genData.setInputService(inputController)
 genData.setOriginalData()
-print(genData.originalData)
+print(genData.originalData.head(5))
 genData.setLinearFeatureData()
 genData.setFactorFeatureData()
 # genData.setLevelFeatureData()
-genData.setLevelForEachLevelFeatureData()
+# genData.setLevelForEachLevelFeatureData()
 genData.setModelTarget()
 genData.setNewData()
 print(genData.newData)
@@ -83,6 +84,7 @@ aicService.setAfterCorData(afterCorData)
 aicService.setCurrentModelProperties(modelProperties)
 aicService.setSortedPValue()
 aicService.setCurrentAIC()
+aicService.setDistributionService(selectedDistribution)
 
 while aicService.minAIC == {}:
     aicService.setNextDrop()
@@ -109,8 +111,18 @@ predictService.setTestResult()
 predictService.setTrainScore()
 predictService.setTestScore()
 
-print(predictService.trainScore)
-print(predictService.testScore)
+print("Train Score: " + str(round(predictService.trainScore*100, 2)))
+print("Test Score: " + str(round(predictService.testScore*100, 2)))
+
+plt.subplot(2, 1, 1)
+plt.title("Train Score: " + str(round(predictService.trainScore*100, 2)))
+plt.plot(genData.modelTargetData, label='real')
+plt.plot(predictService.trainResult, label='predict')
+plt.subplot(2, 1, 2)
+plt.title("Test Score: " + str(round(predictService.testScore*100, 2)))
+plt.plot(predictService.testData[modelProperties.afterCorData.modelTargetData.name])
+plt.plot(predictService.testResult)
+plt.show()
 
 #
 # generatedModel = ModellingService.lmOLSModelling(
