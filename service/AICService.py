@@ -1,7 +1,6 @@
 from model.ModelProperties import ModelProperties
 from model.AfterCorData import AfterCorData
 import pandas as pd
-import re
 
 
 class AICService:
@@ -28,14 +27,15 @@ class AICService:
         self.currentAIC = {self.currentModelProperties.stringModel: self.currentModelProperties.resModel.aic}
 
     def setNextDrop(self):
-        self.nextDrop = self.sortedPValues.index[0]
-        self.sortedPValues.drop(index=self.nextDrop, inplace=True)
+        if len(self.sortedPValues) > 2:
+            self.nextDrop = self.sortedPValues.index[0]
+            self.sortedPValues.drop(index=self.nextDrop, inplace=True)
 
     def setNextModelProperties(self):
         self.nextModelProperties.stringModel = self.currentModelProperties.stringModel.replace(self.nextDrop, '', 1)
         self.nextModelProperties.stringModel = self.nextModelProperties.stringModel.replace('+', '')
         self.nextModelProperties.stringModel = self.nextModelProperties.stringModel.replace(' ', '')
-        self.nextModelProperties.stringModel = self.nextModelProperties.stringModel.replace(']s', '] + s')
+        self.nextModelProperties.stringModel = self.nextModelProperties.stringModel.replace(']n', '] + n')
         self.nextModelProperties.modelType = 'lm'
         self.nextModelProperties.setAfterCorData(self.afterCorData)
         self.nextModelProperties.setResModel()

@@ -10,7 +10,7 @@ class GenData:
         self.linearFeatureData = pd.DataFrame()
         self.factorFeatureData = pd.DataFrame()
         self.levelFeatureData = pd.DataFrame()
-        self.modelTargetData = pd.DataFrame()
+        self.modelTargetData = pd.Series()
         self.newData = pd.DataFrame()
 
     def setInputService(self, inputService):
@@ -18,13 +18,18 @@ class GenData:
 
     def setOriginalData(self):
         self.inputService.setOriginalData()
-        self.originalData = pd.read_csv(self.inputService.originalData)
+        self.originalData = pd.read_csv(self.inputService.originalData).head(
+            int(round(
+                len(self.inputService.originalData) * 0.9
+            ))
+        )
 
     def setLinearFeatureData(self):
         self.inputService.setLinearFeaturePoint()
         if self.inputService.linearFeatureBeginPoint == '0':
-            return
-        self.linearFeatureData = self.originalData.loc[
+            self.linearFeatureData = pd.DataFrame()
+        else:
+            self.linearFeatureData = self.originalData.loc[
                                  :,
                                  self.inputService
                                      .linearFeatureBeginPoint:
@@ -35,8 +40,9 @@ class GenData:
     def setFactorFeatureData(self):
         self.inputService.setFactorFeaturePoint()
         if self.inputService.factorFeatureBeginPoint == '0':
-            return
-        self.factorFeatureData = self.originalData.loc[
+            self.factorFeatureData = pd.DataFrame()
+        else:
+            self.factorFeatureData = self.originalData.loc[
                                  :,
                                  self.inputService
                                      .factorFeatureBeginPoint:
@@ -47,8 +53,9 @@ class GenData:
     def setLevelFeatureData(self):
         self.inputService.setLevelFeaturePoint()
         if self.inputService.levelFeatureBeginPoint == '0':
-            return
-        self.levelFeatureData = self.originalData.loc[
+            self.levelFeatureData = pd.DataFrame()
+        else:
+            self.levelFeatureData = self.originalData.loc[
                                 :,
                                 self.inputService
                                     .levelFeatureBeginPoint:
@@ -76,11 +83,9 @@ class GenData:
             self.levelFeatureData[_] = self.levelFeatureData[_].astype(cat_dtype)
 
     def setNewData(self):
-        self.newData = pd.concat([
-            self.linearFeatureData,
-            self.factorFeatureData,
-            self.levelFeatureData
-        ], axis=1)
+        self.newData = self.newData.append(self.linearFeatureData)
+        self.newData = self.newData.append(self.factorFeatureData)
+        self.newData = self.newData.append(self.levelFeatureData)
 
     def __str__(self):
         return str(self.originalData) \

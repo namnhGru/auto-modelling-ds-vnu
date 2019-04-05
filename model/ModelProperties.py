@@ -34,25 +34,25 @@ class ModelProperties:
         self.modelType = self.inputController.modellingMethod
 
     def setStringModel(self):
-
         stringModel = self.afterCorData.modelTargetData.name + " ~ "
         for _ in self.afterCorData.newData.columns:
             if _ == self.afterCorData.newData.columns[-1]:
-                stringModel += 'self.afterCorData.newData' \
+                stringModel += 'newData' \
                                + "['" + _ + "']"
             else:
-                stringModel += 'self.afterCorData.newData' \
+                stringModel += 'newData' \
                                + "['" + _ + "']" + " + "
 
-        stringModel += " + "
+        if len(self.afterCorData.corBetweenData) != 0:
+            stringModel += " + "
 
         for item in self.afterCorData.corBetweenData:
             for _ in item:
                 if _ == item[-1]:
-                    stringModel += 'self.afterCorData.newData' \
+                    stringModel += 'newData' \
                                    + "['" + _ + "']"
                 else:
-                    stringModel += 'self.afterCorData.newData' \
+                    stringModel += 'newData' \
                                    + "['" + _ + "']" + ":"
 
             if item == self.afterCorData.corBetweenData[-1]:
@@ -88,6 +88,7 @@ class ModelProperties:
             )
 
     def setResModel(self):
+        newData = self.afterCorData.newData
         if self.modelType == 'lm'.casefold():
             self.resModel = smf.ols(
                 self.stringModel,

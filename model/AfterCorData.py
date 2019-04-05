@@ -10,7 +10,7 @@ class AfterCorData:
         self.linearFeatureData = pd.DataFrame()
         self.factorFeatureData = pd.DataFrame()
         self.levelFeatureData = pd.DataFrame()
-        self.modelTargetData = pd.DataFrame()
+        self.modelTargetData = pd.Series()
         self.corBetweenData = []
         self.newData = pd.DataFrame()
 

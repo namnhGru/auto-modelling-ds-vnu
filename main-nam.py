@@ -5,6 +5,7 @@ from model.AfterCorData import AfterCorData
 from model.ModelProperties import ModelProperties
 from service.DistributionService import DistributionService
 from service.AICService import AICService
+from service.PredictService import PredictService
 
 #################################
 #                               #
@@ -32,13 +33,14 @@ inputController = InputController()
 genData = GenData()
 genData.setInputService(inputController)
 genData.setOriginalData()
+print(genData.originalData)
 genData.setLinearFeatureData()
 genData.setFactorFeatureData()
 # genData.setLevelFeatureData()
 genData.setLevelForEachLevelFeatureData()
 genData.setModelTarget()
 genData.setNewData()
-
+print(genData.newData)
 productBanner.showResultBanner()
 productBanner.show(genData.newData.head(5))
 
@@ -97,7 +99,18 @@ while aicService.minAIC == {}:
     aicService.setCurrentAIC()
 
 productBanner.showPredictBanner()
+predictService = PredictService()
+predictService.setInputController(inputController)
+predictService.setModelProperties(modelProperties)
+predictService.setInputData()
+predictService.setTestData()
+predictService.setTrainResult()
+predictService.setTestResult()
+predictService.setTrainScore()
+predictService.setTestScore()
 
+print(predictService.trainScore)
+print(predictService.testScore)
 
 #
 # generatedModel = ModellingService.lmOLSModelling(
