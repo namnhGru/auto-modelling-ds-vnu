@@ -22,7 +22,15 @@ class DistributionService:
         self.genData = genData
 
     def setNormalDistributionScore(self):
-        W, p_value = stats.shapiro(self.genData.modelTargetData)
+        loc, scale = stats.norm.fit(self.genData.modelTargetData)
+        expectedNormDistributionData = stats.norm(loc, scale)
+
+        statistic, p_value = ks_test(
+            self.genData.modelTargetData,
+            expectedNormDistributionData
+        )
+
+        # W, p_value = stats.shapiro(self.genData.modelTargetData)
 
         if p_value < 0.05:
             self.DistributionScoreNormal = {'Normal': (False, p_value)}
@@ -30,8 +38,8 @@ class DistributionService:
             self.DistributionScoreNormal = {'Normal': (True, p_value)}
 
     def setPoissonDistributionScore(self):
-        meanOfData = self.genData.modelTargetData.mean()
-        expectedPoissonDistributionData = stats.poisson(meanOfData)
+        mu = self.genData.modelTargetData.mean()
+        expectedPoissonDistributionData = stats.poisson(mu)
         statistic, p_value = cvm_test(
             self.genData.modelTargetData,
             expectedPoissonDistributionData
@@ -42,8 +50,8 @@ class DistributionService:
             self.DistributionScorePoisson = {'Poisson': (True, p_value)}
 
     def setExpDistributionScore(self):
-        meanOfData = self.genData.modelTargetData.mean()
-        expectedExpDistributionData = stats.expon(1 / meanOfData)
+        loc, scale = stats.expon.fit(self.genData.modelTargetData)
+        expectedExpDistributionData = stats.expon(loc, scale)
         statistic, p_value = ks_test(
             self.genData.modelTargetData,
             expectedExpDistributionData
@@ -55,13 +63,11 @@ class DistributionService:
             self.DistributionScoreExp = {'Exp': (True, p_value)}
 
     def setGammaDistributionScore(self):
-        alpha = self.genData.modelTargetData.mean() ** 2 / np.var(self.genData.modelTargetData)
-        statistic, p_value = stats.kstest(
+        a, loc, scale = stats.gamma.fit(self.genData.modelTargetData)
+        expectedGammaDistributionData = stats.gamma(a, loc, scale)
+        statistic, p_value = ks_test(
             self.genData.modelTargetData,
-            cdf='gamma',
-            args=(
-                alpha,
-            )
+            expectedGammaDistributionData
         )
 
         if p_value < 0.05:
