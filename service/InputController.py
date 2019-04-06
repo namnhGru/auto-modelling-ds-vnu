@@ -25,7 +25,6 @@ class InputController:
                 a = point[0]
                 b = point[0]
 
-
         return a, b
 
     def setOriginalData(self):

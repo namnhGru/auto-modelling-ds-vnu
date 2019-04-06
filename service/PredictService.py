@@ -25,7 +25,7 @@ class PredictService:
         self.inputData = pd.read_csv(self.inputController.originalData)
 
     def setTestData(self):
-        self.testData = self.inputData.head(int(round(len(self.inputData) * 0.2)))
+        self.testData = self.inputData.tail(int(round(len(self.inputData) * 0.2)))
 
     def setTrainResult(self):
         self.trainResult = self.modelProperties.resModel.predict()

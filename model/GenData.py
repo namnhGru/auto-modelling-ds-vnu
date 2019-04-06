@@ -19,7 +19,7 @@ class GenData:
     def setOriginalData(self):
         self.inputService.setOriginalData()
         self.originalData = pd.read_csv(self.inputService.originalData)
-        self.originalData = self.originalData.tail(
+        self.originalData = self.originalData.head(
             int(round(
                 self.originalData.shape[0] * 0.7
             ))
